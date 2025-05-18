@@ -3,7 +3,7 @@ import requests
 import time
 
 # ===== CẤU HÌNH =====
-CHANNEL_ID = "YOUR_CHANNEL_ID"  # ← Thay bằng Channel ID thật
+CHANNEL_ID = "1364890863410352180"  # ← Thay bằng Channel ID thật
 DELAY_BETWEEN_TOKENS = 5        # Nghỉ giữa mỗi token
 LOOP_FOREVER = True             # Đặt True để lặp mãi
 
