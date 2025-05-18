@@ -2,7 +2,7 @@ import os
 import requests
 import time
 
-CHANNEL_ID = "YOUR_CHANNEL_ID"  # Thay bằng ID kênh thật
+CHANNEL_ID = "1364890863410352180"  # Thay bằng ID kênh thật
 DELAY_BETWEEN_MESSAGES = 3
 DELAY_BETWEEN_TOKENS = 5
 
