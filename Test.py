@@ -2,16 +2,13 @@ import os
 import requests
 import time
 import threading
-from fastapi import FastAPI
-import uvicorn
-
-app = FastAPI()
+from flask import Flask
 
 # ==== CẤU HÌNH ====
-CHANNEL_ID = "1364890863410352180"  # ← Thay bằng Channel ID thật
-DELAY_BETWEEN_TOKENS = 5            # Giây nghỉ giữa mỗi token
+CHANNEL_ID = "1364890863410352180"
+DELAY_BETWEEN_TOKENS = 5
 
-# ==== ĐỌC TOKEN TỪ ENV ====
+# ==== ĐỌC TOKEN ====
 tokens_env = os.getenv("DISCORD_TOKENS", "")
 tokens = [t.strip() for t in tokens_env.split(",") if t.strip()]
 if not tokens:
@@ -23,11 +20,10 @@ with open("noidung.txt", "r", encoding="utf-8") as f:
 if not raw:
     raise Exception("❌ File noidung.txt rỗng!")
 
-# ==== ĐỊNH DẠNG ====
 formatted_message = "> # " + raw.replace("\n", "\n> # ")
 url = f"https://discord.com/api/v9/channels/{CHANNEL_ID}/messages"
 
-# ==== GỬI NỘI DUNG ====
+# ==== GỬI LIÊN TỤC ====
 def send_loop():
     while True:
         for i, token in enumerate(tokens):
@@ -39,25 +35,20 @@ def send_loop():
             data = {"content": formatted_message}
             try:
                 res = requests.post(url, headers=headers, json=data)
-                if res.status_code in [200, 201, 204]:
-                    print(f"[✓] Token {i + 1} gửi thành công.")
-                else:
+                if res.status_code not in [200, 201, 204]:
                     print(f"[!] Token {i + 1} lỗi {res.status_code}: {res.text}")
             except Exception as e:
                 print(f"[X] Token {i + 1} gặp lỗi: {e}")
-
             time.sleep(DELAY_BETWEEN_TOKENS)
 
-# ==== API CHECK ====
-@app.get("/")
+# ==== FLASK CHO UPTIME ====
+app = Flask(__name__)
+
+@app.route("/")
 def home():
-    return {"status": "Server đang chạy, gửi tin tự động đã bắt đầu."}
+    return "OK", 200
 
-# ==== KHỞI ĐỘNG TỰ ĐỘNG ====
-@app.on_event("startup")
-def auto_start():
-    threading.Thread(target=send_loop, daemon=True).start()
-
-# ==== CHẠY SERVER ====
+# ==== CHẠY ====
 if __name__ == "__main__":
-    uvicorn.run("Test:app", host="0.0.0.0", port=10000)
+    threading.Thread(target=send_loop, daemon=True).start()
+    app.run(host="0.0.0.0", port=8080)
