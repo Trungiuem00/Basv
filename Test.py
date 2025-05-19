@@ -8,7 +8,7 @@ import uvicorn
 app = FastAPI()
 
 # ==== CẤU HÌNH ====
-CHANNEL_ID = "1364890863410352180"  # ← Thay bằng Channel ID thật
+CHANNEL_ID = "1372978987713826876"  # ← Thay bằng Channel ID thật
 DELAY_BETWEEN_TOKENS = 5        # Giây nghỉ giữa mỗi token
 
 # ==== ĐỌC TOKEN TỪ ENV ====
