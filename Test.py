@@ -8,8 +8,8 @@ import uvicorn
 app = FastAPI()
 
 # ==== CẤU HÌNH ====
-CHANNEL_ID = "1372978987713826876"  # ← Thay bằng Channel ID thật
-DELAY_BETWEEN_TOKENS = 5        # Giây nghỉ giữa mỗi token
+CHANNEL_ID = "1364890863410352180"  # ← Thay bằng Channel ID thật
+DELAY_BETWEEN_TOKENS = 5            # Giây nghỉ giữa mỗi token
 
 # ==== ĐỌC TOKEN TỪ ENV ====
 tokens_env = os.getenv("DISCORD_TOKENS", "")
@@ -37,25 +37,27 @@ def send_loop():
                 "User-Agent": "Mozilla/5.0"
             }
             data = {"content": formatted_message}
-            res = requests.post(url, headers=headers, json=data)
-
-            if res.status_code in [200, 201, 204]:
-                print(f"[✓] Token {i + 1} gửi thành công.")
-            else:
-                print(f"[!] Token {i + 1} lỗi {res.status_code}: {res.text}")
+            try:
+                res = requests.post(url, headers=headers, json=data)
+                if res.status_code in [200, 201, 204]:
+                    print(f"[✓] Token {i + 1} gửi thành công.")
+                else:
+                    print(f"[!] Token {i + 1} lỗi {res.status_code}: {res.text}")
+            except Exception as e:
+                print(f"[X] Token {i + 1} gặp lỗi: {e}")
 
             time.sleep(DELAY_BETWEEN_TOKENS)
 
-# ==== API ====
+# ==== API CHECK ====
 @app.get("/")
 def home():
-    return {"status": "Bot is chạy. Dùng /start để bắt đầu gửi."}
+    return {"status": "Server đang chạy, gửi tin tự động đã bắt đầu."}
 
-@app.get("/start")
-def start():
-    threading.Thread(target=send_loop).start()
-    return {"status": "Đã bắt đầu gửi nội dung liên tục."}
+# ==== KHỞI ĐỘNG TỰ ĐỘNG ====
+@app.on_event("startup")
+def auto_start():
+    threading.Thread(target=send_loop, daemon=True).start()
 
-# ==== CHẠY SERVER (cho local test) ====
+# ==== CHẠY SERVER ====
 if __name__ == "__main__":
     uvicorn.run("Test:app", host="0.0.0.0", port=10000)
