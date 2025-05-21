@@ -6,7 +6,7 @@ from flask import Flask
 
 # ==== CẤU HÌNH ====
 CHANNEL_ID = os.getenv("CHANNEL_ID", "")
-DELAY_BETWEEN_TOKENS = 10  # giây
+DELAY_BETWEEN_TOKENS = 4 # giây
 
 # ==== LẤY TOKEN ====
 tokens_env = os.getenv("DISCORD_TOKENS", "")
